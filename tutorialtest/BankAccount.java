@@ -3,8 +3,6 @@ import java.text.*;
 
 public class BankAccount {
 
-    private static long prevAccountNo = 1000000001;
-
     private int pin;
     private long accountNo;
     private double balance;
@@ -12,16 +10,18 @@ public class BankAccount {
 
     public BankAccount(int pin, long accountNo, User accountHolder) {
         this.pin = pin;
-        this.accountNo = ++BankAccount.prevAccountNo;
+        this.accountNo = accountNo;
         this.balance = 0.0;
         this.accountHolder = accountHolder;
     }
 
     public int getPin() {
+        System.out.println("# LIVEPIN: " + pin);
         return pin;
     }
 
     public long getAccountNo() {
+        System.out.println("# LIVEACCNUM: " + accountNo);
         return accountNo;
     }
 

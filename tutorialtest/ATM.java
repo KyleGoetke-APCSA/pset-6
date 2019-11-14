@@ -17,7 +17,7 @@ public class ATM {
     public ATM() {
         in = new Scanner(System.in);
 
-        activeAccount = new BankAccount(1234, 123456789, new User("Ryan", "Wilson"));
+        activeAccount = new BankAccount(1234 /*PIN*/, 123456789 /*ACCOUNTNUM*/, new User("F_NAME", "L_NAME"));
     }
 
     public void startup() {
