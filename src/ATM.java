@@ -48,7 +48,7 @@ public class ATM {
             while (true) {
                 System.out.print("Account No.: ");
                 if (in.hasNextLong()) {
-                	accountNo = in.nextLong();                    // data validation here
+                	accountNo = in.nextLong();                     // data validation here
                 } else if (in.hasNext()) {
                     if (in.next().charAt(0) == '+') {
                         System.out.println("DEBUG: Correctly recognizes '+' char");
@@ -139,7 +139,15 @@ public class ATM {
 
         public void withdraw() {
             System.out.print("\nEnter amount: ");
-            	double amount = in.nextDouble();
+            /*
+            tempvar = in.next
+            if !(tempvar.isDigit()) {
+                // invalid
+            } else {
+                continue as normal
+            }
+            */
+            	double amount = in.nextDouble();                   // !(amount.isDigit())
                 int status = activeAccount.withdraw(amount);
                 if (status == ATM.INVALID) {
                     System.out.println("\nWithdrawal rejected. Amount must be greater than $0.00.\n");
