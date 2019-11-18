@@ -139,9 +139,6 @@ public class ATM {
 
         public void withdraw() {
             System.out.print("\nEnter amount: ");
-//            	try {
-//            		amount = in.nextDouble();
-//            	}c
             	double amount = in.nextDouble();
                 int status = activeAccount.withdraw(amount);
                 if (status == ATM.INVALID) {
@@ -151,7 +148,6 @@ public class ATM {
                 } else if (status == ATM.SUCCESS) {
                     System.out.println("\nWithdrawal accepted.\n");
                 }
-            System.out.println("\nWithdrawal rejected. Enter vaild amount.\n");
          }
 
         public void transfer() {
