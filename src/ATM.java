@@ -42,48 +42,60 @@ public class ATM {
         public void startup() {
         	long accountNo;
         	int pin;
+            boolean createAccount = false;
             System.out.println("Welcome to the AIT ATM!\n");
 
             while (true) {
                 System.out.print("Account No.: ");
-                if (in.next() == "+") {
-                    accountNo = 0;
-                    System.out.println("createaccount");
-                } else if (in.hasNextLong()) {                  // add data validation here
-                	accountNo = in.nextLong();
+                if (in.hasNextLong()) {
+                	accountNo = in.nextLong();                    // data validation here
+                } else if (in.hasNext()) {
+                    if (in.next().charAt(0) == '+') {
+                        System.out.println("DEBUG: Correctly recognizes '+' char");
+                        accountNo = 0;
+                        createAccount = true;
+                    } else {
+                        accountNo = 0;
+                    }
                 } else {
                 	accountNo = 0;
                 	in.nextLine();
                 }
+                if (!(createAccount)) {
+                    System.out.print("PIN        : ");
+                    if (in.hasNextInt()) {
+                    	pin = in.nextInt();
+                    } else {
+                    	pin = 0;
+                    	in.nextLine();
+                    }
 
-                System.out.print("PIN        : ");
-                if (in.hasNextInt()) {
-                	pin = in.nextInt();
-                } else {
-                	pin = 0;
-                	in.nextLine();
-                }
-
-                if (isValidLogin(accountNo, pin)) {
-                	activeAccount = bank.login(accountNo, pin);
-                    System.out.println("\nHello, again, " + activeAccount.getAccountHolder().getFirstName() + "!\n");
-                    boolean validLogin = true;
-                    while (validLogin) {
-                        switch (getSelection()) {
-                            case VIEW: showBalance(); break;
-                            case DEPOSIT: deposit(); break;
-                            case WITHDRAW: withdraw(); break;
-                            case TRANSFER: transfer(); break;
-                            case LOGOUT: validLogin = false; break;
-                            default: System.out.println("\nInvalid selection.\n"); break;
+                    if (isValidLogin(accountNo, pin)) {
+                    	activeAccount = bank.login(accountNo, pin);
+                        System.out.println("\nHello, again, " + activeAccount.getAccountHolder().getFirstName() + "!\n");
+                        boolean validLogin = true;
+                        while (validLogin) {
+                            switch (getSelection()) {
+                                case VIEW: showBalance(); break;
+                                case DEPOSIT: deposit(); break;
+                                case WITHDRAW: withdraw(); break;
+                                case TRANSFER: transfer(); break;
+                                case LOGOUT: validLogin = false; break;
+                                default: System.out.println("\nInvalid selection.\n"); break;
+                            }
+                        }
+                    } else {
+                        if (accountNo == -1 && pin == -1) {
+                            shutdown();
+                        } else {
+                            System.out.println("\nInvalid account number and/or PIN.\n");
                         }
                     }
                 } else {
-                    if (accountNo == -1 && pin == -1) {
-                        shutdown();
-                    } else {
-                        System.out.println("\nInvalid account number and/or PIN.\n");
-                    }
+                    // create account here
+                    System.out.println("DEBUG: Correctly reaches area to create account \n");
+                    createAccount = false;
+                    // ^ after done creating account, used to return to input
                 }
             }
         }
