@@ -3,29 +3,22 @@ import java.util.Scanner;
 
 public class ATM {
 
-	private Scanner in;
-	private BankAccount activeAccount;
-	private Bank bank;
+    private Scanner in;
+    private BankAccount activeAccount;
+    private Bank bank;
 
-	 public static final int VIEW = 1;
-	 public static final int DEPOSIT = 2;
-	 public static final int WITHDRAW = 3;
-	 public static final int TRANSFER = 4;
-	 public static final int LOGOUT = 5;
-	 public static final int FIRST_NAME_WIDTH = 20;
-	 public static final int LAST_NAME_WIDTH = 20;
+     public static final int VIEW = 1;
+     public static final int DEPOSIT = 2;
+     public static final int WITHDRAW = 3;
+     public static final int TRANSFER = 4;
+     public static final int LOGOUT = 5;
+     public static final int FIRST_NAME_WIDTH = 20;
+     public static final int LAST_NAME_WIDTH = 20;
 
-	 public static final int INVALID = 0;
+     public static final int INVALID = 0;
      public static final int INSUFFICIENT = 1;
      public static final int SUCCESS = 2;
      public static final int OVERFLOW = 3;
-
-    ////////////////////////////////////////////////////////////////////////////
-    //                                                                        //
-    // Refer to the Simple ATM tutorial to fill in the details of this class. //
-    // You'll need to implement the new features yourself.                    //
-    //                                                                        //
-    ////////////////////////////////////////////////////////////////////////////
 
     /**
      * Constructs a new instance of the ATM class.
@@ -36,7 +29,7 @@ public class ATM {
             try {
     			this.bank = new Bank();
     		} catch (IOException e) {
-    			// cleanup any resources (i.e., the Scanner) and exit
+                in.close();
     		}
         }
 
@@ -48,9 +41,9 @@ public class ATM {
 
             while (true) {
                 System.out.print("Account No.: ");
-                if (in.hasNextLong()) {
-                	accountNo = in.nextLong();                     // data validation here
-                } else if (in.hasNext()) {
+                if (in.hasNextLong()) {                            //////////////////////////
+                	accountNo = in.nextLong();                     // data validation here //
+                } else if (in.hasNext()) {                         //////////////////////////
                     if (in.next().charAt(0) == '+') {
                         System.out.println("DEBUG: Correctly recognizes '+' char");
                         accountNo = 0;
@@ -93,10 +86,11 @@ public class ATM {
                         }
                     }
                 } else {
-                    // create account here
+                    //////////////////////////
+                    // create account here! //
+                    //////////////////////////
                     System.out.println("DEBUG: Correctly reaches area to create account \n");
                     createAccount = false;
-                    // ^ after done creating account, used to return to input
                 }
             }
         }
@@ -119,7 +113,12 @@ public class ATM {
             System.out.println("[4] Transfer money");
             System.out.println("[5] Logout");
 
-            return in.nextInt();
+            if (in.hasNextInt()) {
+            	return in.nextInt();
+            } else {
+                in.nextLine();
+                return 6;
+            }
         }
 
         public void showBalance() {
@@ -128,11 +127,11 @@ public class ATM {
 
         public void deposit() {
         	double amount = 0;
-			boolean validAmount = true;
-    		System.out.print("\nEnter amount: ");
+            boolean validAmount = true;
+    		System.out.print("\nEnter amount : ");
     		try {
     			amount = in.nextDouble();
-    		}catch(Exception e) {
+    		} catch(Exception e) {
     			validAmount = false;
     			in.nextLine();
     		}
@@ -155,10 +154,10 @@ public class ATM {
         public void withdraw() {
             double amount = 0;
             boolean validAmount = true;
-            System.out.print("\nEnter amount: ");
+            System.out.print("\nEnter amount : ");
             try {
                 amount = in.nextDouble();
-            } catch(Exception e) {
+            } catch (Exception e) {
                 validAmount = false;
                 in.nextLine();
             }
@@ -178,9 +177,9 @@ public class ATM {
 
         public void transfer() {
         	boolean validAccount = true;
-            System.out.print("\nEnter account: ");
+            System.out.print("\nEnter the other account no. : ");
             long secondedAccountNumber = in.nextLong();
-            System.out.print("Enter amount: ");
+            System.out.print("Enter amount      : ");
             double amount = in.nextDouble();
             if (bank.getAccount(secondedAccountNumber) == null) {
             	validAccount = false;

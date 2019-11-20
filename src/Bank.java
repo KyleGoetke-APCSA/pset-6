@@ -10,11 +10,11 @@ import java.util.List;
 
 public class Bank {
 
-	/*
-	 * Accounts are read from a fixed-width file. Each account is represented
-	 * as a single line of text. These start and end indexes help to parse the
-	 *line of text into individual account fields.
-	 */
+    /*
+     * Accounts are read from a fixed-width file. Each account is represented
+     * as a single line of text. These start and end indexes help to parse the
+     *line of text into individual account fields.
+     */
 
     private final static int ACCT_START = 0;
     private final static int ACCT_END = 9;
