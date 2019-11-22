@@ -46,7 +46,6 @@ public class ATM {
                 	accountNo = in.nextLong();                     // data validation here //
                 } else if (in.hasNext()) {                         //////////////////////////
                     if (in.next().charAt(0) == '+') {
-                        // System.out.println("DEBUG: Correctly recognizes '+' char");
                         accountNo = 0;
                         createAccount = true;
                     } else {
