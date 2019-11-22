@@ -75,7 +75,7 @@ public class BankAccount {
      */
 
     private String formatBalance() {
-        return String.format("%1$15s", balance);
+        return String.format("%.2f", balance);
     }
 
     /*

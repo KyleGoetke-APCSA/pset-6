@@ -6,6 +6,7 @@ public class ATM {
     private Scanner in;
     private BankAccount activeAccount;
     private Bank bank;
+    private User newUser;
 
      public static final int VIEW = 1;
      public static final int DEPOSIT = 2;
@@ -13,7 +14,7 @@ public class ATM {
      public static final int TRANSFER = 4;
      public static final int LOGOUT = 5;
      public static final int FIRST_NAME_WIDTH = 20;
-     public static final int LAST_NAME_WIDTH = 20;
+     public static final int LAST_NAME_WIDTH = 30;
 
      public static final int INVALID = 0;
      public static final int INSUFFICIENT = 1;
@@ -37,15 +38,15 @@ public class ATM {
         	long accountNo;
         	int pin;
             boolean createAccount = false;
-            System.out.println("Welcome to the AIT ATM!\n");
+            System.out.println("Welcome to the AIT ATM!");
 
             while (true) {
-                System.out.print("Account No.: ");
+                System.out.print("\nAccount No.: ");
                 if (in.hasNextLong()) {                            //////////////////////////
                 	accountNo = in.nextLong();                     // data validation here //
                 } else if (in.hasNext()) {                         //////////////////////////
                     if (in.next().charAt(0) == '+') {
-                        System.out.println("DEBUG: Correctly recognizes '+' char");
+                        // System.out.println("DEBUG: Correctly recognizes '+' char");
                         accountNo = 0;
                         createAccount = true;
                     } else {
@@ -74,7 +75,7 @@ public class ATM {
                                 case DEPOSIT: deposit(); break;
                                 case WITHDRAW: withdraw(); break;
                                 case TRANSFER: transfer(); break;
-                                case LOGOUT: validLogin = false; break;
+                                case LOGOUT: validLogin = false; bank.update(activeAccount); bank.save(); break;
                                 default: System.out.println("\nInvalid selection.\n"); break;
                             }
                         }
@@ -86,10 +87,21 @@ public class ATM {
                         }
                     }
                 } else {
-                    //////////////////////////
-                    // create account here! //
-                    //////////////////////////
-                    System.out.println("DEBUG: Correctly reaches area to create account \n");
+                    in.nextLine();
+                    System.out.print("\nFirst Name: ");  //////////////////////////////////////
+                	String firstName = 	in.nextLine();   // Make sure these are both strings //
+                	System.out.print("Last Name: ");     // and other data validation stuff  //
+                	String lastName = in.nextLine();     //////////////////////////////////////
+                	System.out.print("Pin: ");
+                	pin = in.nextInt();
+                	in.nextLine();
+
+                	newUser = new User(firstName, lastName);
+                	BankAccount newAccount = bank.createAccount(pin, newUser);
+                    System.out.println("Thank you. Your account number is " + newAccount.getAccountNo() + ".");
+                    System.out.println("Please login to your newly created account.");
+                    bank.update(newAccount);
+                	bank.save();
                     createAccount = false;
                 }
             }
@@ -122,7 +134,7 @@ public class ATM {
         }
 
         public void showBalance() {
-            System.out.println("\nCurrent balance: " + activeAccount.getBalance());
+            System.out.println("\nCurrent balance: " + activeAccount.getBalance() + "\n");
         }
 
         public void deposit() {
@@ -141,9 +153,12 @@ public class ATM {
                 if (status == ATM.INVALID) {
                     System.out.println("\nDeposit rejected. Amount must be greater than $0.00.\n");
                 } else if (status == ATM.OVERFLOW) {
-                	System.out.println("\nDeposit rejected. Amount would cause balance to exceed $999,999,999,999.99.\n");
+                	System.out.print("\nDeposit rejected. ");
+                    System.out.println("Amount would cause balance to exceed $999,999,999,999.99.\n");
                 } else if (status == ATM.SUCCESS) {
                     System.out.println("\nDeposit accepted.\n");
+                    bank.update(activeAccount);
+                    bank.save();
                 }
     		} else {
     			System.out.println("\nDeposit rejected. Enter vaild amount.\n");
@@ -169,6 +184,8 @@ public class ATM {
                     System.out.println("\nWithdrawal rejected. Insufficient funds.\n");
                 } else if (status == ATM.SUCCESS) {
                     System.out.println("\nWithdrawal accepted.\n");
+                    bank.update(activeAccount);
+                    bank.save();
                 }
             } else {
                 System.out.println("\nWithdrawal rejected. Enter vaild amount.\n");
@@ -179,7 +196,7 @@ public class ATM {
         	boolean validAccount = true;
             System.out.print("\nEnter the other account no. : ");
             long secondedAccountNumber = in.nextLong();
-            System.out.print("Enter amount      : ");
+            System.out.print("Enter amount                : ");
             double amount = in.nextDouble();
             if (bank.getAccount(secondedAccountNumber) == null) {
             	validAccount = false;
@@ -187,7 +204,9 @@ public class ATM {
             if (validAccount) {
             	BankAccount transferAccount = bank.getAccount(secondedAccountNumber);
             	int withdrawStatus = activeAccount.withdraw(amount);
-            	if (withdrawStatus == ATM.INVALID) {
+                if (activeAccount == transferAccount) {
+                    System.out.println("\nTransfer rejected. Destination account matches origin.\n");
+                } else if (withdrawStatus == ATM.INVALID) {
                     System.out.println("\nTransfer rejected. Amount must be greater than $0.00.\n");
                 } else if (withdrawStatus == ATM.INSUFFICIENT) {
                     System.out.println("\nTransfer rejected. Insufficient funds.\n");
@@ -197,6 +216,8 @@ public class ATM {
                         System.out.println("\nTransfer rejected. Amount would cause destination balance to exceed $999,999,999,999.99.\n");
                     } else if (depositStatus == ATM.SUCCESS) {
                     	System.out.println("\nTransfer accepted.\n");
+                        bank.update(activeAccount);
+                        bank.save();
                     }
                 }
             } else {
