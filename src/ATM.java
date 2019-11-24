@@ -8,18 +8,18 @@ public class ATM {
     private Bank bank;
     private User newUser;
 
-     public static final int VIEW = 1;
-     public static final int DEPOSIT = 2;
-     public static final int WITHDRAW = 3;
-     public static final int TRANSFER = 4;
-     public static final int LOGOUT = 5;
-     public static final int FIRST_NAME_WIDTH = 20;
-     public static final int LAST_NAME_WIDTH = 30;
+    public static final int VIEW = 1;
+    public static final int DEPOSIT = 2;
+    public static final int WITHDRAW = 3;
+    public static final int TRANSFER = 4;
+    public static final int LOGOUT = 5;
+    public static final int FIRST_NAME_WIDTH = 20;
+    public static final int LAST_NAME_WIDTH = 30;
 
-     public static final int INVALID = 0;
-     public static final int INSUFFICIENT = 1;
-     public static final int SUCCESS = 2;
-     public static final int OVERFLOW = 3;
+    public static final int INVALID = 0;
+    public static final int INSUFFICIENT = 1;
+    public static final int SUCCESS = 2;
+    public static final int OVERFLOW = 3;
 
     /**
      * Constructs a new instance of the ATM class.
@@ -42,26 +42,39 @@ public class ATM {
 
             while (true) {
                 System.out.print("\nAccount No.: ");
-                if (in.hasNextLong()) {                            //////////////////////////
-                	accountNo = in.nextLong();                     // data validation here //
-                } else if (in.hasNext()) {                         //////////////////////////
-                    if (in.next().charAt(0) == '+') {
-                        accountNo = 0;
-                        createAccount = true;
-                    } else {
-                        accountNo = 0;
-                    }
+                String tempAccNo = in.nextLine();
+                if (tempAccNo.isEmpty()) {
+                    accountNo = 0;
+                } else if (tempAccNo.charAt(0) == '+') {
+                    accountNo = 0;
+                    createAccount = true;
+                } else if (tempAccNo.matches("[0-9]+")) {
+                    accountNo = Long.parseLong(tempAccNo);
+                } else if (tempAccNo.matches("-")) {
+                    accountNo = 0;
+                } else if (!(tempAccNo.matches("[0-9]+")) && !(tempAccNo.contains("-")) ) {
+                    accountNo = 0;
+                } else if (Long.parseLong(tempAccNo) == -1) {
+                    accountNo = -1;
                 } else {
-                	accountNo = 0;
-                	in.nextLine();
+                    accountNo = 0;
                 }
+
                 if (!(createAccount)) {
                     System.out.print("PIN        : ");
-                    if (in.hasNextInt()) {
-                    	pin = in.nextInt();
+                    String tempPin = in.nextLine();
+                    if (tempPin.isEmpty()) {
+                        pin = 0;
+                    } else if (tempPin.matches("[0-9]+")) {
+                        pin = Integer.parseInt(tempPin);
+                    } else if (tempPin.matches("-")) {
+                        pin = 0;
+                    } else if (!(tempPin.matches("[0-9]+")) && !(tempPin.contains("-")) ) {
+                        pin = 0;
+                    } else if (Integer.parseInt(tempPin) == -1) {
+                        pin = -1;
                     } else {
-                    	pin = 0;
-                    	in.nextLine();
+                        pin = 0;
                     }
 
                     if (isValidLogin(accountNo, pin)) {
@@ -74,7 +87,7 @@ public class ATM {
                                 case DEPOSIT: deposit(); break;
                                 case WITHDRAW: withdraw(); break;
                                 case TRANSFER: transfer(); break;
-                                case LOGOUT: validLogin = false; bank.update(activeAccount); bank.save(); break;
+                                case LOGOUT: validLogin = false; bank.update(activeAccount); bank.save(); in.nextLine(); break;
                                 default: System.out.println("\nInvalid selection.\n"); break;
                             }
                         }
@@ -82,26 +95,49 @@ public class ATM {
                         if (accountNo == -1 && pin == -1) {
                             shutdown();
                         } else {
-                            System.out.println("\nInvalid account number and/or PIN.\n");
+                            System.out.println("\nInvalid account number and/or PIN.");
                         }
                     }
                 } else {
-                    in.nextLine();
-                    System.out.print("\nFirst Name: ");  //////////////////////////////////////
-                	String firstName = 	in.nextLine();   // Make sure these are both strings //
-                	System.out.print("Last Name: ");     // and other data validation stuff  //
-                	String lastName = in.nextLine();     //////////////////////////////////////
-                	System.out.print("Pin: ");
-                	pin = in.nextInt();
-                	in.nextLine();
+                    System.out.print("\nFirst Name: ");
+                	String firstName = 	in.nextLine();
 
-                	newUser = new User(firstName, lastName);
-                	BankAccount newAccount = bank.createAccount(pin, newUser);
-                    System.out.println("Thank you. Your account number is " + newAccount.getAccountNo() + ".");
-                    System.out.println("Please login to your newly created account.");
-                    bank.update(newAccount);
-                	bank.save();
-                    createAccount = false;
+                	if (firstName.length() <= 20 && firstName.length() > 0) {
+                		System.out.print("Last Name: ");
+                    	String lastName = in.nextLine();
+
+                    	if (lastName.length() <= 30 && lastName.length() > 0) {
+                    		System.out.print("Pin: ");
+                           	if (in.hasNextInt()) {
+                        		pin = in.nextInt();
+                        		in.nextLine();
+
+                        		if (pin >= 1000 && pin <= 9999) {
+                        			newUser = new User(firstName, lastName);
+                                	BankAccount newAccount = bank.createAccount(pin, newUser);
+                                	System.out.print("\nThank you. Your account number is ");
+                                    System.out.println(newAccount.getAccountNo() + ".");
+                                	System.out.println("Please login to access your newly created account.");
+                                	bank.update(newAccount);
+                                	bank.save();
+                                    createAccount = false;
+                        		} else {
+                        			System.out.println("\nYour pin must be between 1000 and 9999.\n");
+                                    createAccount = false;
+                        		}
+                            } else {
+                            	in.nextLine();
+                            	System.out.println("\nYour pin must be numeric.\n");
+                                createAccount = false;
+                            }
+                    	} else {
+                    		System.out.println("\nYour last name must be between 1 and 30 characters long.");
+                            createAccount = false;
+                    	}
+                	} else {
+                		System.out.println("\nYour first name must be between 1 and 20 characters long.");
+                        createAccount = false;
+                	}
                 }
             }
         }
@@ -110,7 +146,7 @@ public class ATM {
         	boolean valid = false;
         	try {
         		valid = bank.login(accountNo, pin) != null ? true : false;
-        	}catch (Exception e) {
+        	} catch (Exception e) {
         		valid = false;
         	}
 
