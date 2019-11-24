@@ -149,7 +149,6 @@ public class ATM {
         	} catch (Exception e) {
         		valid = false;
         	}
-
             return valid;
         }
 
@@ -198,7 +197,6 @@ public class ATM {
     		} else {
     			System.out.println("\nDeposit rejected. Enter vaild amount.\n");
     		}
-
         }
 
         public void withdraw() {
@@ -258,19 +256,15 @@ public class ATM {
             } else {
             	System.out.println("\nTransfer rejected. Destination account not found.\n");
             }
-
         }
 
         public void shutdown() {
             if (in != null) {
                 in.close();
             }
-
             System.out.println("\nGoodbye!");
             System.exit(0);
         }
-
-
 
     /*
      * Application execution begins here.
