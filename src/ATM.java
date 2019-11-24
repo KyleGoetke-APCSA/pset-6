@@ -87,7 +87,7 @@ public class ATM {
                                 case DEPOSIT: deposit(); break;
                                 case WITHDRAW: withdraw(); break;
                                 case TRANSFER: transfer(); break;
-                                case LOGOUT: validLogin = false; bank.update(activeAccount); bank.save(); in.nextLine(); break;
+                                case LOGOUT: bank.update(activeAccount); bank.save(); validLogin = false; in.nextLine(); break;
                                 default: System.out.println("\nInvalid selection.\n"); break;
                             }
                         }
